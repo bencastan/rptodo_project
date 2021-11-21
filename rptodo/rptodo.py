@@ -29,7 +29,7 @@ class Todoer:
         if read.error == DB_READ_ERROR:
             return CurrentTodo(todo, read.error)
         read.todo_list.append(todo)
-        write = self._db_handler.write_todo(read.todo_list)
+        write = self._db_handler.wrtie_todos(read.todo_list)
         return CurrentTodo(todo, write.error)
     
     def get_todo_list(self) -> List[Dict[str, Any]]:
@@ -47,5 +47,22 @@ class Todoer:
         except IndexError:
             return CurrentTodo({}, ID_ERROR)
         todo["Done"] = True
-        write = self._db_handler.write_todo(read.todo_list)
+        write = self._db_handler.wrtie_todos(read.todo_list)
         return CurrentTodo(todo, write.error)
+
+    def remove(self, todo_id: int) -> CurrentTodo:
+        """Remove a to-do from the database using its id or index."""
+        read = self._db_handler.read_todos()
+        if read.error:
+            return CurrentTodo({}, read.error)
+        try:
+            todo = read.todo_list.pop(todo_id - 1)
+        except IndexError:
+            return CurrentTodo({}, ID_ERROR)
+        write = self._db_handler.write_todos(read.todo_list)
+        return CurrentTodo(todo, write.error)
+
+    def remove_all(self) -> CurrentTodo:
+        """Remove all to-dos from the database."""
+        write = self._db_handler.write_todos([])
+        return CurrentTodo({}, write.error)

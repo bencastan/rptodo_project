@@ -45,7 +45,7 @@ class DatabaseHandler:
         except OSError: # Catch file IO Problems
             return DBResponse([], DB_READ_ERROR)
 
-    def write_todo(self, todo_list: List[Dict[str, Any]]) -> DBResponse:
+    def write_todos(self, todo_list: List[Dict[str, Any]]) -> DBResponse:
         try:
             with self._db_path.open("w") as db:
                 json.dump(todo_list, db, indent=4)
