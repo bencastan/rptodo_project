@@ -106,7 +106,23 @@ def list_all() -> None:
             fg=typer.colors.BLUE,
         )
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
-
+@app.command(name="complete")
+def set_done(todo_id: int = typer.Argument(...)) -> None:
+    """Complete a to-do by setting tit as done using its TODO_ID."""
+    toder = get_todoer()
+    todo, error = toder.set_done(todo_id)
+    if error:
+        typer.secho(
+            f'Completing to-do # "{todo_id}" failed with "{ERRORS[error]}"',
+            fg=typer.colors.RED
+        )
+        raise typer.Exit(1)
+    else:
+        typer.secho(
+            f"""to-do # {todo_id} "{todo['Description']}" completed!""",
+            fg=typer.colors.GREEN
+        )
+        
 def _version_callback(value: bool) -> None:
     if value:
         typer.echo(f"{__app_name__} v{__version__}")
